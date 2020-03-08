@@ -479,7 +479,7 @@ GameObject:
   - component: {fileID: 1011189331315044771}
   - component: {fileID: 1011189331315044768}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Bus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
