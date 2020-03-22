@@ -2,7 +2,9 @@
 
 public class ControlManager : MonoBehaviour
 {
+
     private static ControlManager instance = null;
+
     public ControlManager Get { get { return instance; } }
     // 선언되고 단 한번만 실행 
     private void Awake()
@@ -22,6 +24,8 @@ public class ControlManager : MonoBehaviour
         
     }
 
+    public RectTransform ClickMenu = null;
+
     private Node prevNode = null;
 
     // 매 프레임(?) 마다 실행되는 함수
@@ -35,16 +39,17 @@ public class ControlManager : MonoBehaviour
         // Input.GetMouseButton(0) 마우스의 버튼을 눌럿다 뗐을때 true -눌렀다 뗐을때
         if (Input.GetMouseButtonDown(0))
         {
+            if (ClickMenu.gameObject.activeSelf) return;
             //마우스의 위치를 스크린 상의 포인트 좌표로 변환한다
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             //변환된 위치(ray)를 가지고 해당 포인트 위치부터 z축으로 레이저를 쏴준다
             //out, ref - 숙제
             //out? 값을 파라메터로 변환시켜준다 -반환한 값이 많을 경우 
-            if(Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit))
             {
                 if (hit.collider == null) return;
-                if(hit.collider.gameObject.GetComponent<Node>()is Node n)
+                if (hit.collider.gameObject.GetComponent<Node>() is Node n)
                 {
                     if (prevNode != null)
                     {
@@ -52,16 +57,55 @@ public class ControlManager : MonoBehaviour
                         {
                             n.MaterialColor = Color.white; //색깔을 하얀색으로 다시 바꾼다(선택 취소)
                             prevNode = null;
+
+                            ClickMenu.gameObject.SetActive(false);
                             return; //이함수를 종료 
                         }
-                        else 
+                        else
                             prevNode.MaterialColor = Color.white;//전에 선택 됐던 블록을 하얀색으로 바꿈
                     }
 
                     n.MaterialColor = NodeManager.Get.SelectColor;
                     prevNode = n;//SelectColor값을 가져와서 선택한 것에 넣는다
+
+                    ClickMenu.anchoredPosition = Input.mousePosition;
+                    ClickMenu.gameObject.SetActive(true);
                 }
             }
+
+        }
+        else if (Input.GetMouseButtonDown(1))
+            OnClose();
+    }
+
+    public void OnClose()
+    {
+        ClickMenu.gameObject.SetActive(false);
+
+        if (prevNode != null)
+        {
+            prevNode.MaterialColor = Color.white;
+            prevNode = null;
         }
     }
+
+    public void OnStandardTower()
+    {
+        if (!IsCheck(5)) return;
+
+        var model = Resources.Load("Prefabs/Standard Turret") as GameObject;
+        GameObject go = Instantiate(model, prevNode.transform) as GameObject;
+        go.transform.parent = prevNode.transform;
+        go.transform.localPosition = new Vector3(0, .5f, 0);
+        go.transform.localScale = new Vector3(.5f, .5f, .5f);
+
+        OnClose();
+    }
+
+    private bool IsCheck(int price)
+    {
+        if (prevNode == null) return false;
+        return true;
+    }
+
 }
