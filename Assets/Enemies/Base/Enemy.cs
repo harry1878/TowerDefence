@@ -2,14 +2,16 @@
 
 public class Enemy : EnemyTransform
 {
-    public int MaxHP;
     public int Prize;
-    protected int currentHp;
+    public int Hp;
 
     public void OnHit(int damage)
     {
-        currentHp -= damage;
-        if (currentHp <= 0)
+        Hp -= damage;
+        if (Hp <= 0)
+        {
             SpawnManager.Get.DestroyEnemy(this);
+            GameManager.Get.Money += Prize;
+        }
     }
 }

@@ -124,4 +124,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HitParticle: {fileID: 1152660346300642473, guid: 63d88cbb62a953c4fac9bd9150245a66,
     type: 3}
-  ExplosionRadius: 3
+  ExplosionRadius: 2.5

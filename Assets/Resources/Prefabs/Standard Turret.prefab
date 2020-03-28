@@ -77,7 +77,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 1
   Range: 5
-  FireRate: 0.1
+  FireRate: 0.5
   Price: 5
   BulletSpeed: 20
   Neck: {fileID: 1196614024008867925}

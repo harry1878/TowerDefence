@@ -46,7 +46,9 @@ public class GameManager : MonoBehaviour
             rt = Instantiate(lifePrefab, lifeTransform).GetComponent<RectTransform>();
             rt.localPosition = vec;
             lifes.Add(rt);
+            
         }
+        Money = 100;
         #region 간결화
         //for (int i = 0; i < 10; ++i)
         //{
@@ -90,6 +92,7 @@ public class GameManager : MonoBehaviour
         }
 
             lifes.Add(rt);
+
     }
 
     public void RemoveLife()
