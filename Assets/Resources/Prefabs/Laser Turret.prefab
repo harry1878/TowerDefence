@@ -46,7 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f38c34ca27e714d449bdbe3705b7c0cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Damage: 1
+  turretType: 0
+  Damage: 0.1
   Range: 5
   FireRate: 0.01
   Price: 15

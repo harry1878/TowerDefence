@@ -10,8 +10,16 @@ public class CameraController : MonoBehaviour
     public float MinY = 10f;
     public float MaxY =80f;
 
+    private Camera mCamera = null;
+    private void Awake()
+    {
+        mCamera = GetComponent<Camera>();
+    }
+
     private void Update()
     {
+        if (GameManager.Get.isGameOver) return;
+
         if (Input.GetKeyDown(KeyCode.Space))
             isLock = !isLock;
 
@@ -32,16 +40,27 @@ public class CameraController : MonoBehaviour
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if(scroll != 0f)
         {
-            Vector3 vec = transform.position;
-            vec.y -= scroll * 1000f * ScrollSpeed * Time.deltaTime;
+            if(mCamera.orthographic)
+            {
+                float value = mCamera.orthographicSize;
+                value -= scroll * 100f * Time.deltaTime;
 
-            //Clamp
-            //min = 0, max = 10;
-            //vec.y =5
-            //vec.y 11-> max -> vec.y =10
-            //해당값을 보정해 주는함수
-            vec.y = Mathf.Clamp(vec.y, MinY, MaxY);
-            transform.position = vec;
+                value = Mathf.Clamp(value, 5f, 20f);
+                mCamera.orthographicSize = value;
+            }
+            else
+            {
+                Vector3 vec = transform.position;
+                vec.y -= scroll * 1000f * ScrollSpeed * Time.deltaTime;
+
+                //Clamp
+                //min = 0, max = 10;
+                //vec.y =5
+                //vec.y 11-> max -> vec.y =10
+                //해당값을 보정해 주는함수
+                vec.y = Mathf.Clamp(vec.y, MinY, MaxY);
+                transform.position = vec;
+            }
         }
         
     }

@@ -9,6 +9,8 @@ public class SpawnManager : MonoBehaviour
     public static SpawnManager Get { get; set; } = null;
 
     public GameObject[] Prefabs;
+    public Material PrefabMaterial;
+    public GameObject HealthBar;
     public float RoundWaitTime = 10f; //끝나고 대기할 시간
     public float SpawnTime = 1.5f; // 한마리 뽑을때 마다 대기할 시간
     public float SpawnLimit = 10f; // 최대 몬스터 개수 
@@ -16,7 +18,7 @@ public class SpawnManager : MonoBehaviour
     public Slider NextSlider;
 
     //유니티와 시리얼라이즈를 하지말라는 속성
-    [NonSerialized] public int roundCount = 0;
+    [NonSerialized] public int roundCount = 1;
 
     //List?
     //배열처럼 처음 선언할때 개수에 정함이 없고, 삽입, 삭제가 용이한 클래스
@@ -39,7 +41,6 @@ public class SpawnManager : MonoBehaviour
     public void DestroyEnemy(Enemy enemy)
     {
         enemies.Remove(enemy);
-        Destroy(enemy.gameObject);
     }
 
     private void Awake()
@@ -58,6 +59,12 @@ public class SpawnManager : MonoBehaviour
     private IEnumerator UpdateSpawnTimer(float checkTime)
     {
         TextButton.text = "In Coming ..";
+        PrefabMaterial.color = new Color(
+            UnityEngine.Random.Range(0f, 1f),
+            UnityEngine.Random.Range(0f, 1f),
+            UnityEngine.Random.Range(0f, 1f));
+
+        int enemyType = UnityEngine.Random.Range(0, Prefabs.Length);
 
         int count = 0;
         float currTime;
@@ -68,8 +75,8 @@ public class SpawnManager : MonoBehaviour
             {
                 yield return null; //한 프레임 쉬고 다시 실행
             }
-                
-            SpawnEnemy(0);
+
+            SpawnEnemy(enemyType);
            
         }
 
@@ -101,7 +108,12 @@ public class SpawnManager : MonoBehaviour
             Quaternion.identity,    //회전값을 초기화한다(0, 0, 0)
             null);
 
-        enemies.Add(g.GetComponent<Enemy>());
+        Enemy e = g.GetComponent<Enemy>();
+        e.SetParameter(roundCount);
+
+        e.HealthBar = Instantiate(HealthBar, null).GetComponent<RectTransform>();
+
+        enemies.Add(e);
 
         //Quaternion.identity
         //단위행렬 

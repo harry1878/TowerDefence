@@ -18,7 +18,6 @@ public class ExplosionBullet : Bullet
             if (colliders[i].CompareTag("Enemy"))
                 colliders[i].GetComponent<Enemy>().OnHit(damage);
         }
-        Destroy(gameObject);
         Destroy(p, 2f);
     }
 }

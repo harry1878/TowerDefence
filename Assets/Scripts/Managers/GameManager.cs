@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -65,6 +66,10 @@ public class GameManager : MonoBehaviour
     public GameObject lifePrefab = null;
     public Text moneyText = null;
 
+    public GameObject PopUp = null;
+    public Text PrevRoundText = null;
+    public Text CurrentRoundText = null;
+
     private int money;
     public int Money
     {
@@ -95,18 +100,43 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public bool isGameOver = false;
     public void RemoveLife()
     {
-        if (lifes.Count == 0) return;
+        if (isGameOver) return;
 
         //List안에 life가 두개 들어있다고 가정
         // 첫 번째 라이프는 lifes[0] 에 들어 있다, ex)0, 1
         // Count 는 진짜 개수를 반환하기 때문에 ,lifes.Count == 2를 반환
         //그래서 리스트의 마지막 원소를 접근하기 위해서는 lifes.Count - 1 로 접근이 가능!
         RectTransform value = lifes[lifes.Count - 1];
-        lifes.RemoveAt(lifes.Count - 1);
         //인덱스로 삭제하는 방법
+        lifes.RemoveAt(lifes.Count - 1);
         Destroy(value.gameObject);
+
+        if(lifes.Count == 0)
+        {
+            PopUp.SetActive(true);
+            int currentRound = SpawnManager.Get.roundCount;
+
+            //저장되어있는 값이 있으면 그값을 주고 
+            //없으면 디폴트 값을 준다 int = 0
+            int bestRound = PlayerPrefs.GetInt("BestRound");
+
+            if(currentRound > bestRound)
+            {
+                PlayerPrefs.SetInt("BestRound", currentRound);
+                bestRound = currentRound;
+            }
+
+            CurrentRoundText.text = currentRound.ToString();
+            PrevRoundText.text = bestRound.ToString();
+
+            Time.timeScale = 0;
+            isGameOver = true;
+            return;
+        }
+
     }
     //decimal : 소수점 5칸만! 정확함 
 
@@ -131,6 +161,11 @@ public class GameManager : MonoBehaviour
                 lifeTransform.localPosition.x,
                 0f);
         }
+    }
 
+    public void OnLoadTitle()
+    {
+        SceneManager.LoadScene(0);
+        Time.timeScale = 1;
     }
 }

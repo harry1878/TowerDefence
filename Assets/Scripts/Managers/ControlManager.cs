@@ -29,6 +29,7 @@ public class ControlManager : MonoBehaviour
     public GameObject BuyMenu = null;
     public GameObject OtherMenu = null;
     public Text CostText = null;
+    public Text SellText = null;
 
     private Node prevNode = null;
 
@@ -36,6 +37,8 @@ public class ControlManager : MonoBehaviour
     // 실제로 매 프레임마다 그렇진 않지만 그렇게 보임 
     private void Update()
     {
+        if (GameManager.Get.isGameOver) return;
+
         //0:왼쪽 버튼 클릭 , 1: 오른쪽, 2: 마우스 휠
         //Input?사용자의 입력을 받는 클래스
         // Input.GetMouseButton(0) 마우스의 키값이 들어와 있으면 true -꾹 누른다
@@ -106,6 +109,8 @@ public class ControlManager : MonoBehaviour
             Transform t = prevNode.transform.GetChild(0);
             TurretStatus status = t.GetComponent<TurretStatus>();
 
+            SellText.text = $"${Mathf.RoundToInt(status.Price * 0.75f).ToString()}";
+
             switch (status.turretType)
             {
                 case TurretStatus.TurretType.Standard:
@@ -167,7 +172,13 @@ public class ControlManager : MonoBehaviour
 
     public void OnSellButton()
     {
+        var turret = prevNode.GetComponentInChildren<TurretStatus>();
+        GameManager.Get.Money += Mathf.RoundToInt(turret.Price * 0.75f);
 
+        // turret을 지워버리면 객체가 지워지는게 아니라 컴포넌트가 지워진다
+        Destroy(turret.gameObject);
+
+        OnClose();
     }
 
     public void OnStandardTower()
